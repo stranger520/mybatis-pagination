@@ -56,7 +56,7 @@ public class Pager {
     }
 
     public int getPageTotal() {
-        pageTotal = (pageTotal % pageSize ) == 0 ? pageTotal / pageSize : (pageTotal / pageSize) + 1;
+        pageTotal = (total % pageSize ) == 0 ? total / pageSize : (total / pageSize) + 1;
         return pageTotal;
     }
 
