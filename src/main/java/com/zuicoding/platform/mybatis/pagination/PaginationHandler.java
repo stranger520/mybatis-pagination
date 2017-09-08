@@ -33,7 +33,7 @@ public class PaginationHandler implements Interceptor {
 
     private IDialect dialect = IDialect.DefaultDialect.MYSQL;
 
-    private static final List<ResultMap> COUNT_RESULTMAPS = new ArrayList<>(1);
+    private static final List<ResultMap> COUNT_RESULT_MAPS = new ArrayList<>(1);
 
     private static final String COUNT_SQL_SUFFIX = "-SELECT-COUNT";
 
@@ -91,8 +91,8 @@ public class PaginationHandler implements Interceptor {
         //有些查询不需要查询总数
         if (countSql != null && !"".equals(countSql.trim())){
 
-            if (COUNT_RESULTMAPS.size() == 0){
-                COUNT_RESULTMAPS.add(new ResultMap.Builder(ms.getConfiguration(),
+            if (COUNT_RESULT_MAPS.size() == 0){
+                COUNT_RESULT_MAPS.add(new ResultMap.Builder(ms.getConfiguration(),
                         ms.getId()+COUNT_SQL_SUFFIX,Integer.class,
                         Collections.<ResultMapping>emptyList()).build());
             }
@@ -164,7 +164,7 @@ public class PaginationHandler implements Interceptor {
         builder.resultMaps(ms.getResultMaps());
         //如果是构建 count mappedStatement,将 查询 count result map 设置进去
         if (isCount){
-            builder.resultMaps(COUNT_RESULTMAPS);
+            builder.resultMaps(COUNT_RESULT_MAPS);
 
         }
 

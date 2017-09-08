@@ -33,23 +33,23 @@ public interface IDialect {
         ORACLE {
             @Override
             public String buildPaginationSql(String sql, int offset, int limit) {
-                return null;
+               throw new UnsupportedOperationException();
             }
 
             @Override
             public String buildCountSql(String sql) {
-                return null;
+                throw new UnsupportedOperationException();
             }
         },
         SQLSERVER{
             @Override
             public String buildPaginationSql(String sql, int offset, int limit) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public String buildCountSql(String sql) {
-                return null;
+                throw new UnsupportedOperationException();
             }
         };
     }
