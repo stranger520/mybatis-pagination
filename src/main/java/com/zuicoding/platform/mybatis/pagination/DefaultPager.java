@@ -5,7 +5,7 @@ package com.zuicoding.platform.mybatis.pagination;
  * <p>
  * Description :<p></p>
  */
-public class Pager {
+public class DefaultPager implements Pagination {
 
     private int pageNum = 1;
     private int pageSize = 10;
@@ -14,15 +14,15 @@ public class Pager {
     private int total = 0;
     private int pageTotal = 0;
 
-    public Pager() {
+    public DefaultPager() {
     }
 
-    public Pager(int pageNum, int pageSize) {
+    public DefaultPager(int pageNum, int pageSize) {
         this.pageNum = pageNum;
         this.pageSize = pageSize;
     }
 
-    public Pager(int pageNum) {
+    public DefaultPager(int pageNum) {
         this.pageNum = pageNum;
     }
 
@@ -42,9 +42,15 @@ public class Pager {
         this.pageSize = pageSize;
     }
 
+    @Override
     public int getOffset() {
         offset = (pageNum - 1) * pageSize;
         return offset;
+    }
+
+    @Override
+    public int getLimit() {
+        return pageSize;
     }
 
     public int getTotal() {

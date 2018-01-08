@@ -5,7 +5,7 @@
 
 * 1.java 代码示例：
 ```java
-PageHelper.pageStart(pager);
+PageHelper.pageStart(defaultPager);
 //mapper方法 以 ByPager 结尾，这是可配置的
 List<Object> list =  testerMapper.selectListByPager(post);
 PageHelper.pageEnd();

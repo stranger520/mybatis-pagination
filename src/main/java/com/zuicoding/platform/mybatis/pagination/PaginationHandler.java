@@ -29,7 +29,7 @@ public class PaginationHandler implements Interceptor {
 
     private Logger log = LoggerFactory.getLogger(PaginationHandler.class);
 
-    public static final ThreadLocal<Pager> localPage = new ThreadLocal<Pager>();
+    public static final ThreadLocal<Pagination> localPage = new ThreadLocal<Pagination>();
 
     private IDialect dialect = IDialect.DefaultDialect.MYSQL;
 
@@ -44,21 +44,21 @@ public class PaginationHandler implements Interceptor {
 
     public static void pageStart(int pageNum,int pageSize){
         if (pageNum <=0) pageNum = 1;
-        localPage.set(new Pager(pageNum,pageSize));
+        localPage.set(new DefaultPager(pageNum,pageSize));
     }
-    public static void pageStart(Pager pager){
-        if (pager == null) pager = new Pager();
-        localPage.set(pager);
+    public static void pageStart(Pagination pagination){
+        if (pagination == null) pagination = new DefaultPager();
+        localPage.set(pagination);
     }
 
     public static void pageStart(){
         pageStart(null);
     }
 
-    public static Pager pageEnd(){
-        Pager pager = localPage.get();
+    public static Pagination pageEnd(){
+        Pagination defaultPager = localPage.get();
         localPage.remove();
-        return pager;
+        return defaultPager;
     }
 
     @Override
@@ -72,8 +72,8 @@ public class PaginationHandler implements Interceptor {
         }
         if (!ms.getId().endsWith(methodSuffix)) return invocation.proceed();
 
-        Pager pager = localPage.get();
-        if(pager == null){
+        Pagination defaultPager = localPage.get();
+        if(defaultPager == null){
             log.warn("page message is null");
             return invocation.proceed();
         }
@@ -104,23 +104,25 @@ public class PaginationHandler implements Interceptor {
 
             Executor executor = (Executor) invocation.getTarget();
             //构建 count MappedStatement
-            MappedStatement countMs = reBuildMappedStatement(ms,countBoundSql,true);
+            MappedStatement countMs = rebuildMappedStatement(ms,countBoundSql,true);
             List<Integer> list = executor.query(countMs,parameter,RowBounds.DEFAULT,null);
             if (list!=null && !list.isEmpty()){
                 int total = list.get(0);
-                pager.setTotal(total);
+                defaultPager.setTotal(total);
             }
 
         }
 
-        String limitSql = this.dialect.buildPaginationSql(originSql.getSql(),pager.getOffset(),pager.getPageSize());
+        String limitSql = this.dialect.buildPaginationSql(originSql.getSql(),
+                defaultPager.getOffset(), defaultPager.getLimit());
+
         if(log.isDebugEnabled()){
             log.debug("limit sql is : {}",limitSql);
         }
         BoundSql limitBoundSql = new BoundSql(ms.getConfiguration(),
                 limitSql,originSql.getParameterMappings(),originSql.getParameterObject());
 
-        MappedStatement newMs = reBuildMappedStatement(ms,limitBoundSql,false);
+        MappedStatement newMs = rebuildMappedStatement(ms,limitBoundSql,false);
 
         invocation.getArgs()[0] = newMs;
         log.info(" reBuild limit sql finished...");
@@ -134,7 +136,7 @@ public class PaginationHandler implements Interceptor {
      * @param isCount
      * @return
      */
-    private MappedStatement reBuildMappedStatement(MappedStatement ms,
+    private MappedStatement rebuildMappedStatement(MappedStatement ms,
                                                    BoundSql newBoundSql,boolean isCount){
         String id = ms.getId();
         if (isCount){
