@@ -1,7 +1,7 @@
 package com.zuicoding.platform.mybatis.pagination;
 
 /**
- * Created by <a href="mailto:linyajun@baidu.com">linyajun</a> on 2018/1/8.
+ * Created by <a href="mailto:stephen.linicoding@gmail.com">Stephen.lin</a> on 2018/1/8.
  * <p>
  * <p>
  *     将分页对象抽象成一个接口，以便于其他形式的 分页查询
